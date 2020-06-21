@@ -320,6 +320,11 @@ class Backtesting:
 
                 if row.buy == 0 or row.sell == 1:
                     continue  # skip rows where no buy signal or that would immediately sell off
+                
+                if self.strategy.backtest_lock_pair_until:
+                    strategy_lock_until = self.strategy.backtest_lock_pair_until(trades, pair, tmp.datetime)
+                    if strategy_lock_until:
+                        lock_pair_until[pair] = strategy_lock_until
 
                 if (not position_stacking and pair in lock_pair_until
                         and row.date <= lock_pair_until[pair]):
