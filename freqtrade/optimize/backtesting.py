@@ -356,11 +356,11 @@ class Backtesting:
 
         starting_amount = stake_amount
         rolling_amt = starting_amount
-        #print("ROLLING INFO")
+        print("ROLLING INFO")
         for trade in trades:
             p_l = rolling_amt * trade.profit_percent
             new_balance = rolling_amt + p_l
-            #print(f"Start: {round(rolling_amt, 3)}, End: {round(new_balance, 3)}, Perf: {round(trade.profit_percent, 3)}")
+            print(f"Start: {round(rolling_amt, 3)}, End: {round(new_balance, 3)}, Perf: {round(trade.profit_percent, 3)}")
             rolling_amt = new_balance
 
         return DataFrame.from_records(trades, columns=BacktestResult._fields)
