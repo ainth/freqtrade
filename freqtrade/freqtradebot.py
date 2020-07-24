@@ -20,7 +20,7 @@ from freqtrade.data.dataprovider import DataProvider
 from freqtrade.edge import Edge
 from freqtrade.exceptions import DependencyException, InvalidOrderException, PricingError
 from freqtrade.exchange import timeframe_to_minutes, timeframe_to_next_date
-from freqtrade.misc import safe_value_fallback
+from freqtrade.misc import safe_value_fallback, throttle
 from freqtrade.pairlist.pairlistmanager import PairListManager
 from freqtrade.persistence import Trade
 from freqtrade.resolvers import ExchangeResolver, StrategyResolver
@@ -630,12 +630,19 @@ class FreqtradeBot:
 
             except DependencyException as exception:
                 logger.warning('Unable to sell trade: %s', exception)
-
+                self._throttled_msg({
+                    'type': RPCMessageType.CUSTOM_NOTIFICATION,
+                    'status': f'\N{SHOCKED FACE WITH EXPLODING HEAD} Unable to exit position due to {exception}'
+                })
         # Updating wallets if any trade occured
         if trades_closed:
             self.wallets.update()
 
         return trades_closed
+
+    @throttle(minutes=2)
+    def _throttled_msg(self, payload):
+        self.rpc.send_msg(payload)
 
     def _order_book_gen(self, pair: str, side: str, order_book_max: int = 1,
                         order_book_min: int = 1):
