@@ -383,6 +383,12 @@ class IStrategy(ABC):
                          f"sell_type={stoplossflag.sell_type}")
             return stoplossflag
 
+        # super hack - if we ever increased stop loss ever that means trailing stop
+        # was engaged so only ever sell on stoploss now...
+        if trade.stop_loss > trade.initial_stop_loss:
+            #raise Exception('ehhhh')
+            return SellCheckTuple(sell_flag=False, sell_type=SellType.NONE)
+
         # Set current rate to high for backtesting sell
         current_rate = high or rate
         current_profit = trade.calc_profit_ratio(current_rate)

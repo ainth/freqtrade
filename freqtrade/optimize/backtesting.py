@@ -376,7 +376,7 @@ class Backtesting:
         for trade in trades:
             p_l = rolling_amt * trade.profit_percent
             new_balance = rolling_amt + p_l
-            print(f"Start: {round(rolling_amt, 3)}, End: {round(new_balance, 3)}, Perf: {round(trade.profit_percent, 3)}")
+            print(f"Start: {round(rolling_amt, 5)}, End: {round(new_balance, 5)}, Perf: {round(trade.profit_percent*100, 3)} Pair: {trade.pair} on: {trade.close_time}")
             rolling_amt = new_balance
 
         return DataFrame.from_records(trades, columns=BacktestResult._fields)
